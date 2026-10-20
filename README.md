@@ -8,6 +8,14 @@ This repository contains modeling code and documentation for nonlinear dynamics 
 - Integration of experimental data and predictive models
 - Visualization of feedback-induced chaos and attractor transitions
 
+## Featured analysis
+
+**[`notebooks/optoelectronic_dynamics.ipynb`](notebooks/optoelectronic_dynamics.ipynb)** — a self-contained
+analysis of the oscillator's two operating regimes from audio recordings. Builds an envelope feature table
+with **pandas**/**scipy**, recovers the Period-1 vs Period-2 regimes by **unsupervised** PCA + KMeans
+(scikit-learn, clean separation), and reconstructs the phase-space attractors by delay embedding. Based on
+[Joiner, Palmero & Carretero-González, *Int. J. Bifurcation and Chaos* 26(05), 2016](https://doi.org/10.1142/S0218127416500802).
+
 ## Contents
 
 - `notebooks/` – Jupyter notebooks for modeling and analysis
