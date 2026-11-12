@@ -1,0 +1,69 @@
+# Optoelectronic circuit experiments: attempt and result log
+
+Consolidated on **2026-11-02** from the saved notebooks, their executed outputs, derived summaries and existing revision logs. This is a review of prior work; no simulation was rerun for the cleanup. Numerical checks validate the stated model implementation, not the physical apparatus.
+
+## Current notebooks
+
+| Notebook | Main result and status |
+|---|---|
+| [two_loop_base_capacitor_study.ipynb](two_loop_base_capacitor_study.ipynb) | **Retained oscillating dual-loop candidate.** Two cross-coupled laser/BPW34 boards with a 1 MΩ ∥ 100 nF feedback branch give alternating compact-model pulses near a 15.5 µs period (~64.5 kHz). An added base-ground capacitor is not required. Small added capacitances preserve pulses; larger values can damp small perturbations, while 10 nF can retain oscillations for a different initial charge. This is initial-condition dependence/coexistence in the model, not a universal capacitor cutoff. Peaks around 8.5 mW exceed the nominal module description. Fast charge parameters, amplifier validity and unidentified laser current limiting can affect whether the physical oscillation exists. Thirteen saved checks passed. |
+| [nightlight_rc_equivalent_blocks.ipynb](nightlight_rc_equivalent_blocks.ipynb) | **Retained equivalent-circuit investigation.** Exact nonlinear RC coordinate transformations reproduce the reference thermal equation to ~1e-6 K; fixed RC values are local approximations. At 2200 K, cooling is ~24.3 ms and the voltage-driven pole ~18.7 ms. The printed carrier lifetime is 1 ps, not an assumed slow BPW34 memory. A physical 3.595 mF emitter-storage candidate gives delayed optical decay under 5 V DC (90–10% fall ~106 ms), recovery after light removal, and a dim self-feedback equilibrium (~1.06 mW). Under 60 Hz, 5 V peak, zero-offset AC with explicit isolation diodes, it remains nearly dark in the tested 1.2 s window (~60 nW late self-output). Removing the macroscopic capacitor gives ordinary one-pulse-per-drive-cycle output, peak ~0.77 mW. An apparent period-three control pattern was a sampling artifact, resolved by phase-aligned sampling and tighter integration. Thirty-two checks passed across the notebook. No complete passive thermal equivalent, reference chaos reproduction or hardware validation is established. |
+
+## Component and assembly attempts removed from the active folder
+
+| Former notebook | What was attempted | Main saved result |
+|---|---|---|
+| transistor_testbench.ipynb | Reusable physics-based 2N3904 compact model, datasheet fit, collector sweeps at different base voltages, charge checks. | Produced saturation/current-family plots and current/charge consistency checks. Device fitting supports a compact model, not independent circuit validation. Python component library is retained. |
+| photodiode_testbench.ipynb | BPW34 optical-current, spectral-response, loaded DC and transient tests. | Checked charge, current balance and responsivity; demonstrated ~100 ns rise time in the stated small-signal test. This does not supply a slow carrier memory for the board. |
+| opamp_testbench.ipynb | OPA380 open-loop, loaded closed-loop and transient compact-model tests. | Demonstrated model operation inside stated supply/common-mode limits. It does not validate the later reverse-powered whole-board AC setup. |
+| laser_testbench.ipynb | Carrier/photon/electrical laser model and current/voltage-driven tests. | A nominal assumed 45 mA scenario yields ~4.00 mW at ~3.075 V. Threshold, slope and internal resistance are provisional; an unidentified active module driver is not represented. |
+| light_activated_laser_60hz.ipynb | Shared 60 Hz, ±5 V board supply; externally illuminated BPW34 inhibits transistor base drive. | Conditional forward-path calculations suppress and restore laser pulses. Full-cycle OPA380 supply and assumed high-branch common-mode checks fail; complete photographed-hardware switching is not verified. |
+| two_loop_digital_twin.ipynb | Two boards with 1 MΩ and 100 nF **in series** with each photodiode; compare with actual CSV. | Series branch carries ~1.25 µA versus ~379 µA base drive and barely inhibits the laser; no sustained inhibition/bistability demonstrated. Historical data are ~5.5 Hz, not this proposed 60 Hz circuit. A 2.5 ms read alignment removes ~94.7% of loop area under the stated exclusions; poor direct-node agreement and unknown wiring prevent a validated fit. |
+| twin_output/_superseded_rev1/two_loop_digital_twin_rev1.ipynb | Superseded early two-board notebook retained beneath derived outputs. | Historical revision replaced by the later focused series-RC study; no separate current validation claim. Removed with the other unselected notebooks. |
+
+## Passive delay and inhibition attempts removed from the active folder
+
+| Former notebook | What was attempted | Main saved result |
+|---|---|---|
+| shunt_capacitor_feedback_experiment.ipynb | 2200 µF base-to-ground storage; 1 kΩ and BPW34 inhibition path; 10 kΩ amplifier drive. | DC light can discharge base storage and sustain suppression, followed by recovery. The conditional 60 Hz dark control does not provide qualifying recurring laser pulses, so it cannot validate light-triggered turn-off under that AC condition. |
+| base_capacitor_frequency_sweep.ipynb | Same large base capacitor; increase source frequency from 1 Hz through 10 kHz. | Higher frequency reduces ripple but does not guarantee enough average base charge. A steadier base voltage can remain too low for useful lasing; reverse-powered amplifier assumptions still limit hardware interpretation. |
+| capacitor_connection_comparison.ipynb | Compare a one-lead floating capacitor, series C–R sensor path and parallel C∥R sensor path under DC and AC. | Floating one-lead capacitor gives no intentional ideal-circuit delay. A series capacitor blocks sustained DC photocurrent. A parallel R/C branch preserves a DC path and can give an off kick followed by recovery during continuing illumination; transients must be separated from periodic response. |
+| one_loop_DC_experiment.ipynb | Continuous self-illumination with the base-storage inhibition circuit under DC. | Tested startup charges converge near 0.936 mW rather than sustained full-on/full-off cycling. Independent applied light can sustain off; self-feedback approaches a dim equilibrium. |
+| threshold_delayed_inhibition.ipynb | Explicit illumination threshold, switched RC timer, hysteretic inhibit stage and Q2 clamp. | Produces delayed shutoff and relaxation cycling (~1.79 s period after startup). These dynamics depend on ideal comparator/latch/switch macromodels; this is an architecture demonstration, not the requested minimal passive implementation. |
+| two_capacitor_feedback.ipynb | Base-ground C1 plus C2 in parallel with a resistive photodiode-return path. | Independent light can hold the laser off. Tested continuous self-feedback settles near 0.942 mW; added capacitance alone did not create threshold-triggered delayed oscillation in those trajectories. |
+| photodiode_parallel_capacitor.ipynb | Capacitor alone across BPW34, with a capacitance sweep. | Changes switching times: default independent-light suppression below 1% at ~1.129 s and recovery to 90% at ~14.072 s. Tested self-feedback settles near 0.936 mW, without sustained pulses. |
+| rc_q2_inhibition.ipynb | RC sensor node drives a compact-model NPN Q2 that pulls Q1 base down. | Provides delayed sustained external-light inhibition (~83 ms to below 1% for the 100 µF example), and recovery (~1.37 s to 90%). Self-feedback approaches an equilibrium; no imposed ideal comparator is required, but an extra transistor is used. |
+| rc_output_base_comparison.ipynb | Route the resistor-input/capacitor-to-ground sketch to Q1 base, then to Q2 base; test a reset resistor. | Direct Q1 connection with the stated detector polarity adds base drive and brightens. Q2 connection inhibits; a reset resistor changes recovery from seconds to ~0.13 s. Tested reduced self-feedback cases settle. Endpoint/polarity choices matter. |
+| parallel_rl_feedback.ipynb | R∥(L + winding resistance) between Q1 base and BPW34, retaining base storage. | Inductor current delays redistribution; tested large-inductance cases settle around 0.932 mW. No sustained self-oscillation in those sampled DC trajectories. |
+| inductor_only_feedback.ipynb | Increase the parallel resistance, then remove it; include intrinsic detector charge. | Tested self-feedback settles near 0.932 mW. Removing light can produce a high-voltage transient; some cases reach the conservative 29.9 V model-validity boundary. This is a stop boundary, not a predicted physical breakdown/clamp voltage. |
+| inductor_1mH_feedback.ipynb | Replace the very large coil by 1 mH with assumed 100 Ω winding resistance. | Complete runs remain in the demonstration domain, and self-feedback settles near 0.932 mW. Small L shortens inductive timing; it does not create a sustained pulse train in the tested case. |
+| flyback_inductance_sweep.ipynb | Add an antiparallel flyback diode and sweep L from 1 mH to very large exploratory values. | Diode supplies a current-dependent recirculation path and limits the removal transient; changing L changes current-memory times. It does not create the missing regenerative switching by itself. Coil/diode parasitics and parts remain assumed. |
+| collector_rc_self_feedback.ipynb | Collector-node capacitor to ground plus resistor on the laser side; DC self-feedback. | A precharged collector capacitor delays turn-on as Q1 discharges it, and can extend light at turn-off. Cold startup can instead give immediate light. Tested self-feedback cases settle; initial charge and resistor losses matter. |
+
+## Oscillation and regenerative-switching comparisons removed from the active folder
+
+| Former notebook | What was attempted | Main saved result |
+|---|---|---|
+| two_loop_parallel_rc.ipynb | Cross-couple two lasers and BPW34s through 1 MΩ∥100 nF feedback branches. | Conditional alternating compact-model pulses at ~64.5 kHz, with ~8.5 mW peaks. Continuous capacitor charge, separate starts and refinement support the model candidate. Quantitative and physical validity remain limited. The retained base-capacitor study extends this experiment. |
+| transistor_latch_ac_dc.ipynb | Added PNP regenerative branch to Q1; compare trigger-only and base-reset illumination under DC/AC. | Holds after trigger removal on DC; direct base reset can break regeneration. AC allows extinction and retriggering. This is a powered two-transistor SCR-like network, not a passive one-NPN equivalent or validated two-terminal SCR law. |
+| latch_delay_spreading.ipynb | Add optical delay, geometric attenuation and photodiode charge memory to the regenerative model. | Sampled pure delays and spreading alone remain period one. At κ=0.8, 10 µF detector storage plus regeneration produces period-two AC responses; controls without regeneration remain period one. No reference order–chaos–order sequence or experimental chaos established. |
+| single_transistor_rlc_feedback.ipynb | One NPN, laser, BPW34, 1 µF detector storage and exploratory 10 H coil, with explicit protective diodes under 60 Hz AC. | Conditional period-two output (~0.88/2.82 mW alternating peaks). Removing feedback, added detector C or L restores period one in tested controls. Optional base storage gives finite DC holding (~9.71 ms), not indefinite latching. The 10 H part and fast parameters remain unvalidated. |
+
+## Interpretation carried forward
+
+- Capacitors store charge; inductors store current/flux. Neither is an ideal fixed timer or an indefinite latch.
+- Sustained self-feedback oscillation was found in some model architectures, not universally across passive-delay candidates. Dim settling, AC-forced pulses, multicycle responses and autonomous oscillations are different outcomes.
+- The two-loop result retained above is a conditional model prediction. It is not confirmation of the actual experiment or a claim of chaos.
+- The nightlight thermal/carrier equations have exact mathematical RC analogs involving nonlinear/controlled elements. A fixed passive circuit needs separate loading, energy and switching tests.
+- The BPW34 laser board and the reference CdS nightlight are different detectors. The historical CSV does not establish the new circuits' response or identify their wiring.
+- Source supply limits, OPA380 common-mode/reverse-power limits, unknown module current limiting, device charge priors and sampling artifacts constrain conclusions.
+
+## Cleanup scope and recovery
+
+Only the two selected notebooks remain under this folder, including its subfolders. The other 25 `.ipynb` files were selected for deletion, including one superseded copy under `twin_output`. Their original bytes are preserved in `../../08_work_log/2026-11-02_notebook_cleanup/removed_notebooks_recovery.zip` before deletion. `cleanup_manifest.json` records each original relative path, SHA-256 hash, size and keep/delete action; `cleanup_receipt.json` records the actual outcome and retained hashes.
+
+Reusable Python components, figures, derived CSV/JSON results, original data, literature and existing work logs are preserved. The two retained notebooks are kept byte-for-byte unchanged. No simulation results were regenerated or fitted for this cleanup.
+
+## Evidence
+
+The recovery ZIP preserves the removed notebooks' source and saved outputs. Existing logs under `08_work_log` provide the assembly and revision record, especially `2026-10-26_series_rc_two_loop`, `2026-10-26_two_loop_parallel_rc`, `2026-10-26_base_ground_capacitor_study`, `2026-11-01_single_transistor_rlc`, `2026-11-01_nightlight_rc_blocks`, `2026-11-01_rc_connected_switching` and `2026-11-01_rc_emitter_ac`. Derived numerical evidence remains in `twin_output` and plots in `06_figures`.
